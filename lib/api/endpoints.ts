@@ -75,3 +75,4 @@ export const mensagensApi = {
   recentes: (limit?: number) => apiClient.get("/mensagens/recentes", { params: { limit } }),
 };
 
+

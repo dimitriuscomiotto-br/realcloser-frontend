@@ -164,3 +164,4 @@ Acesse: http://localhost:3000
 
 **Status:** ✅ Estrutura base criada e pronta para desenvolvimento!
 
+

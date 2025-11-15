@@ -25,3 +25,4 @@ export const useThemeStore = create<ThemeState>((set) => ({
   setTheme: (theme) => set({ theme }),
 }));
 
+
