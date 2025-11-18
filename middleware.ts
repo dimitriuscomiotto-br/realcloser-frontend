@@ -4,7 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
+  let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
     },
@@ -20,24 +20,32 @@ export async function middleware(request: NextRequest) {
           return request.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: any) {
+          // Atualizar cookies na requisição
           request.cookies.set(name, value);
-          response = NextResponse.next({
-            request,
+          // Criar nova resposta com os cookies atualizados
+          supabaseResponse = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
           });
-          response.cookies.set(name, value, options);
+          supabaseResponse.cookies.set(name, value, options);
         },
         remove(name: string, options: any) {
+          // Remover cookie da requisição
           request.cookies.set(name, "");
-          response = NextResponse.next({
-            request,
+          // Criar nova resposta sem o cookie
+          supabaseResponse = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
           });
-          response.cookies.set(name, "", { ...options, maxAge: 0 });
+          supabaseResponse.cookies.set(name, "", { ...options, maxAge: 0 });
         },
       },
     }
   );
 
-  // Verificar sessão
+  // Verificar sessão (isso pode atualizar cookies)
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -46,13 +54,6 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get("host") || "";
   const subdomain = hostname.split(".")[0];
 
-  // Se não for o domínio principal, buscar configuração da imobiliária
-  if (subdomain && subdomain !== "www" && subdomain !== "app") {
-    // TODO: Buscar configuração da imobiliária pelo subdomínio
-    // Por enquanto, apenas adicionar header
-    response.headers.set("x-imobiliaria-subdomain", subdomain);
-  }
-
   // Proteção de rotas autenticadas
   const path = request.nextUrl.pathname;
   const isAuthRoute = path.startsWith("/login") || path.startsWith("/register");
@@ -60,17 +61,24 @@ export async function middleware(request: NextRequest) {
     path.startsWith("/propostas") || path.startsWith("/contratos") || 
     path.startsWith("/documentos") || path.startsWith("/mensagens");
 
+  // Se for rota protegida e não tiver sessão, redirecionar
   if (isProtectedRoute && !session) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirect", path);
     return NextResponse.redirect(redirectUrl);
   }
 
+  // Se for rota de auth e tiver sessão, redirecionar para dashboard
   if (isAuthRoute && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  return response;
+  // Adicionar header de subdomínio se necessário
+  if (subdomain && subdomain !== "www" && subdomain !== "app") {
+    supabaseResponse.headers.set("x-imobiliaria-subdomain", subdomain);
+  }
+
+  return supabaseResponse;
 }
 
 export const config = {

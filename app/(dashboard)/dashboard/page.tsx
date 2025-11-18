@@ -5,10 +5,22 @@
 import { useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useDashboardStats } from "@/lib/hooks/useDashboard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import {
+  FileText,
+  AlertCircle,
+  Building2,
+  Handshake,
+  FileCheck,
+} from "lucide-react";
 
 export default function DashboardPage() {
   const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -16,7 +28,7 @@ export default function DashboardPage() {
     }
   }, [loading, isAuthenticated, router]);
 
-  if (loading) {
+  if (loading || statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -32,28 +44,121 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Imóveis</h2>
-          <p className="text-3xl font-bold text-primary">0</p>
-          <p className="text-sm text-gray-600">Total cadastrados</p>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-gray-600 mt-1">
+            Visão geral dos seus contratos e atividades
+          </p>
         </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Propostas</h2>
-          <p className="text-3xl font-bold text-primary">0</p>
-          <p className="text-sm text-gray-600">Em andamento</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-2">Contratos</h2>
-          <p className="text-3xl font-bold text-primary">0</p>
-          <p className="text-sm text-gray-600">Aguardando assinatura</p>
-        </div>
+        <Link href="/contratos/novo">
+          <Button>
+            <FileText className="mr-2 h-4 w-4" />
+            + Novo Contrato
+          </Button>
+        </Link>
       </div>
+
+      {/* Cards de Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Imóveis */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Imóveis</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.imoveis.total || 0}</div>
+            <p className="text-xs text-muted-foreground">Total cadastrados</p>
+            <div className="mt-2 flex gap-4 text-xs">
+              <span className="text-blue-600">
+                {stats?.imoveis.comProposta || 0} com proposta
+              </span>
+              <span className="text-green-600">
+                {stats?.imoveis.vendidos || 0} vendidos
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Contratos Ativos */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Contratos Ativos</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.contratos.ativos || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              {stats?.contratos.aguardandoAssinatura || 0} aguardando assinatura
+            </p>
+            <p className="text-xs text-green-600 mt-1">
+              {stats?.contratos.concluidos || 0} concluídos
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Propostas */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Propostas</CardTitle>
+            <Handshake className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats?.propostas.total || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              {stats?.propostas.emAndamento || 0} em andamento
+            </p>
+            <p className="text-xs text-green-600 mt-1">
+              {stats?.propostas.aprovadas || 0} aprovadas
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Pendências */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pendências</CardTitle>
+            <AlertCircle className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              {stats?.pendencias.documentacao || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Documentação pendente
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Ações Rápidas */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium">Ações Rápidas</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link href="/contratos/novo/ia">
+            <Button variant="outline" className="w-full justify-start">
+              <FileText className="mr-2 h-4 w-4" />
+              Criar Contrato com IA
+            </Button>
+          </Link>
+          <Link href="/documentos/validar">
+            <Button variant="outline" className="w-full justify-start">
+              <FileCheck className="mr-2 h-4 w-4" />
+              Validar Documentos
+            </Button>
+          </Link>
+          <Link href="/certidoes">
+            <Button variant="outline" className="w-full justify-start">
+              <FileText className="mr-2 h-4 w-4" />
+              Emitir Certidões
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }
