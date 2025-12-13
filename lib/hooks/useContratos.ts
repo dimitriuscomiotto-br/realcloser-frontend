@@ -63,4 +63,16 @@ export function useAssinarContrato() {
   });
 }
 
+export function useVerificarPendencias(propostaId: string) {
+  return useQuery({
+    queryKey: ["contratos", "pendencias", propostaId],
+    queryFn: async () => {
+      const { data } = await contratosApi.verificarPendencias(propostaId);
+      return data.data;
+    },
+    enabled: !!propostaId,
+  });
+}
+
+
 

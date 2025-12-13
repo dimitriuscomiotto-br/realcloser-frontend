@@ -40,3 +40,6 @@ export async function getImobiliariaDoUsuario(): Promise<Imobiliaria | null> {
     return null;
   }
 }
+
+
+

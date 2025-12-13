@@ -3,6 +3,7 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useMinhaImobiliaria } from "@/lib/hooks/useFrontend";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -44,8 +45,12 @@ function ImobiliariaLogo({
 }
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, imobiliaria, signOut } = useAuth();
+  const { user, signOut } = useAuth();
+  const { data: imobiliariaData } = useMinhaImobiliaria();
   const router = useRouter();
+
+  // Usar dados do hook do frontend ou fallback para dados do auth
+  const imobiliaria = imobiliariaData || null;
 
   const handleSignOut = async () => {
     await signOut();
@@ -98,9 +103,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     nomeFantasia={imobiliaria.nome_fantasia}
                     razaoSocial={imobiliaria.razao_social}
                   />
-                  {imobiliaria.nome_fantasia && (
+                  {(imobiliaria.nome_fantasia || imobiliaria.razao_social) && (
                     <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                      {imobiliaria.nome_fantasia}
+                      {imobiliaria.nome_fantasia || imobiliaria.razao_social}
                     </span>
                   )}
                 </div>
@@ -119,5 +124,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
 
 

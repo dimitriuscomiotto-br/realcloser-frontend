@@ -71,4 +71,17 @@ export function useAprovarPropostaVendedor() {
   });
 }
 
+export function useUpdateProposta() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Proposta> }) =>
+      propostasApi.atualizar(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["propostas"] });
+    },
+  });
+}
+
+
 

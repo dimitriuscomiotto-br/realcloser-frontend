@@ -75,4 +75,23 @@ export const mensagensApi = {
   recentes: (limit?: number) => apiClient.get("/mensagens/recentes", { params: { limit } }),
 };
 
+// Frontend Endpoints - Dados completos e formatados
+export const frontendApi = {
+  // Minha Imobiliária
+  minhaImobiliaria: () => apiClient.get("/frontend/minha-imobiliaria"),
+
+  // Meus Imóveis
+  meusImoveis: (filters?: { status?: string; imobiliaria_id?: string }) =>
+    apiClient.get("/frontend/meus-imoveis", { params: filters }),
+
+  // Minhas Propostas
+  minhasPropostas: (filters?: { status?: string; imovel_id?: string; imobiliaria_id?: string }) =>
+    apiClient.get("/frontend/minhas-propostas", { params: filters }),
+
+  // Meus Contratos
+  meusContratos: (filters?: { status?: string; proposta_id?: string; imovel_id?: string }) =>
+    apiClient.get("/frontend/meus-contratos", { params: filters }),
+};
+
+
 
