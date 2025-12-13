@@ -178,4 +178,120 @@ export interface Mensagem {
   usuario?: Usuario;
 }
 
+// Tipos para endpoints do frontend (dados completos)
+export interface ImobiliariaCompleta {
+  id: string;
+  usuario_id: string;
+  razao_social: string;
+  nome_fantasia: string;
+  cnpj: string;
+  creci: string;
+  logo_url?: string;
+  endereco?: string;
+  telefone?: string;
+  email?: string;
+  ativo: boolean;
+  usuario: {
+    id: string;
+    nome: string;
+    email: string;
+    role: string;
+  };
+  corretores?: Array<{
+    id: string;
+    nome: string;
+    cpf: string;
+    creci: string;
+    usuario?: {
+      id: string;
+      nome: string;
+      email: string;
+      telefone?: string;
+    };
+  }>;
+  estatisticas?: {
+    total_imoveis: number;
+    total_propostas: number;
+    total_contratos: number;
+  };
+}
+
+export interface ImovelCompleto extends Imovel {
+  imobiliaria?: {
+    id: string;
+    razao_social: string;
+    nome_fantasia?: string;
+  };
+  proprietarios?: Array<{
+    id: string;
+    pessoa: {
+      id: string;
+      nome: string;
+      cpf: string;
+      email?: string;
+      telefone?: string;
+    };
+    percentual_propriedade: number;
+  }>;
+  total_propostas: number;
+  propostas_ativas: number;
+}
+
+export interface PropostaCompleta extends Proposta {
+  imovel: {
+    id: string;
+    titulo: string;
+    endereco: string;
+    cidade: string;
+    preco: number;
+    imagens?: string[];
+  };
+  comprador: {
+    id: string;
+    nome: string;
+    cpf: string;
+    email?: string;
+    telefone?: string;
+  };
+  vendedor: {
+    id: string;
+    nome: string;
+    cpf: string;
+    email?: string;
+    telefone?: string;
+  };
+  tem_contrato: boolean;
+  contrato_id?: string;
+  contrato_status?: string;
+}
+
+export interface ContratoCompleto extends Contrato {
+  proposta: {
+    id: string;
+    valor: number;
+    status: string;
+  };
+  imovel: {
+    id: string;
+    titulo: string;
+    endereco: string;
+    cidade?: string;
+    preco: number;
+  };
+  comprador: {
+    id: string;
+    nome: string;
+    cpf: string;
+    email?: string;
+  };
+  vendedor: {
+    id: string;
+    nome: string;
+    cpf: string;
+    email?: string;
+  };
+  total_mensagens: number;
+}
+
+
 
