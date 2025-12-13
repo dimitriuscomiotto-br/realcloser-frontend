@@ -1,21 +1,8 @@
 // lib/supabase/queries/imoveis.ts
-// Queries do Supabase para imóveis
+// Queries do Supabase para imóveis (server-side)
 
 import { createClient } from "@/lib/supabase/server";
-import type { Imovel } from "@/types";
-
-export interface ImovelFilters {
-  codigo?: string;
-  endereco?: string;
-  status?: string;
-  proprietario?: string;
-}
-
-export interface ImovelComRelacoes extends Imovel {
-  proprietarios?: Array<{ id: string; nome: string }>;
-  documentos_count?: number;
-  due_diligence_status?: "ok" | "pendente" | null;
-}
+import type { ImovelFilters, ImovelComRelacoes } from "@/lib/utils/imoveis";
 
 /**
  * Busca imóveis da imobiliária com filtros opcionais
@@ -170,17 +157,5 @@ export async function getImoveisDaImobiliaria(
   );
 }
 
-/**
- * Mapeia o status do banco para o rótulo em português
- */
-export function mapStatusToLabel(status: string): string {
-  const statusMap: Record<string, string> = {
-    disponivel: "Liberado",
-    reservado: "Negociação",
-    vendido: "Vendidos",
-    retirado: "Retirado",
-  };
-
-  return statusMap[status] || status;
-}
+// Função mapStatusToLabel movida para lib/utils/imoveis.ts para evitar conflitos de importação
 

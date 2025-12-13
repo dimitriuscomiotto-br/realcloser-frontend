@@ -2,8 +2,7 @@
 // Queries do Supabase para imóveis (versão client-side)
 
 import { createClient } from "@/lib/supabase/client";
-import type { Imovel } from "@/types";
-import type { ImovelFilters, ImovelComRelacoes } from "./imoveis";
+import type { ImovelFilters, ImovelComRelacoes } from "@/lib/utils/imoveis";
 
 /**
  * Busca imóveis da imobiliária com filtros opcionais (versão client-side)

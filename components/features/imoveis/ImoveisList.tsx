@@ -5,8 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { getImoveisDaImobiliariaClient } from "@/lib/supabase/queries/imoveis-client";
-import { mapStatusToLabel } from "@/lib/supabase/queries/imoveis";
-import type { ImovelComRelacoes } from "@/lib/supabase/queries/imoveis";
+import { mapStatusToLabel, type ImovelComRelacoes } from "@/lib/utils/imoveis";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";

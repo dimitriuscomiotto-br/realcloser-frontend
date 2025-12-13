@@ -6,9 +6,45 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { Building2 } from "lucide-react";
+import { useState } from "react";
+
+function ImobiliariaLogo({ 
+  logoUrl, 
+  nomeFantasia, 
+  razaoSocial 
+}: { 
+  logoUrl?: string | null; 
+  nomeFantasia?: string | null;
+  razaoSocial: string;
+}) {
+  const [imageError, setImageError] = useState(false);
+
+  if (!logoUrl || imageError) {
+    return (
+      <div className="w-8 h-8 flex items-center justify-center bg-gray-100 rounded flex-shrink-0">
+        <Building2 className="w-5 h-5 text-gray-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-8 h-8 flex-shrink-0">
+      <Image
+        src={logoUrl}
+        alt={nomeFantasia || razaoSocial}
+        fill
+        className="object-contain rounded"
+        sizes="32px"
+        onError={() => setImageError(true)}
+      />
+    </div>
+  );
+}
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, imobiliaria, signOut } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -53,7 +89,24 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">{user?.email}</span>
+            <div className="flex items-center space-x-3">
+              {/* Logo da Imobiliária */}
+              {imobiliaria && (
+                <div className="flex items-center space-x-2">
+                  <ImobiliariaLogo
+                    logoUrl={imobiliaria.logo_url}
+                    nomeFantasia={imobiliaria.nome_fantasia}
+                    razaoSocial={imobiliaria.razao_social}
+                  />
+                  {imobiliaria.nome_fantasia && (
+                    <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                      {imobiliaria.nome_fantasia}
+                    </span>
+                  )}
+                </div>
+              )}
+              <span className="text-sm text-gray-600">{user?.email}</span>
+            </div>
             <Button variant="outline" size="sm" onClick={handleSignOut}>
               Sair
             </Button>

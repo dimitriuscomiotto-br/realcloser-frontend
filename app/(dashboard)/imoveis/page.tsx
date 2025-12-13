@@ -1,4 +1,4 @@
-// app/(dashboard)/dashboard/imoveis/page.tsx
+// app/(dashboard)/imoveis/page.tsx
 // Página de listagem de imóveis da imobiliária
 
 import { Suspense } from "react";

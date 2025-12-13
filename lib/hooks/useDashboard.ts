@@ -120,3 +120,5 @@ export function useDashboardStats() {
     refetchInterval: 30000, // Atualizar a cada 30 segundos
   });
 }
+
+
